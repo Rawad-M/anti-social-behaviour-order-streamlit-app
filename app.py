@@ -15,12 +15,23 @@ st.write("Issued ASBOs dataset overview:")
 st.dataframe(data_asbo_issued.head())
 st.write("Breached ASBOs dataset overview:")
 st.dataframe(data_asbo_breached.head())
+st.divider()
 
-# Plot
-st.subheader("Issued ASBOs Data Overview")
+# Plot Overview
+st.subheader("ASBOs Issued Over Years")
 fig, ax = plt.subplots()
 ax.bar(data_asbo_issued['Year of Issue'], data_asbo_issued['ASBOs issued'], color='skyblue')
 ax.set_xlabel("Year of Issue")
 ax.set_ylabel("ASBOs Issued")
 ax.set_title("ASBOs Issued Over Years")
 st.pyplot(fig)
+
+st.subheader("ASBOs Breached Over Years")
+fig, ax = plt.subplots()
+ax.bar(data_asbo_breached['Year of Breach'], data_asbo_breached['ASBOs_breached'], color='skyblue')
+ax.set_xlabel("Year of Breach")
+ax.set_ylabel("ASBOs Breach")
+ax.set_title("ASBOs Breached Over Years")
+st.pyplot(fig)
+st.divider()
+
