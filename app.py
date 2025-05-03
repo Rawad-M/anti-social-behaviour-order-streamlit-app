@@ -2,38 +2,56 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Load dataset from /data folder
+@st.cache_data
+def load_data():
+    data_asbo_issued = pd.read_csv('data/anti-social-behaviour-order-statistics-court-level-issued-0113.csv', encoding='ISO-8859-1')  
+    data_asbo_breached = pd.read_csv('data/anti-social-behaviour-order-statistics-court-level-breaches-0113.csv', encoding='ISO-8859-1')  
+    return data_asbo_issued, data_asbo_breached
+
+data_asbo_issued, data_asbo_breached = load_data()
+
 st.title("UK Government anti-social behaviour order (ASBO)")
 st.write("This application will visualise & display ASBO data for analysis and deeper understanding of the dataset")
 
-# Load dataset from /data folder
-data_asbo_issued = pd.read_csv('data/anti-social-behaviour-order-statistics-court-level-issued-0113.csv', encoding='ISO-8859-1')  
-data_asbo_breached = pd.read_csv('data/anti-social-behaviour-order-statistics-court-level-breaches-0113.csv', encoding='ISO-8859-1')  
 
 # Create table overview
-st.subheader("Data Overview")
-st.write("Issued ASBOs dataset overview:")
-st.dataframe(data_asbo_issued.head())
-st.write("Breached ASBOs dataset overview:")
-st.dataframe(data_asbo_breached.head())
-st.divider()
+@st.cache_data
+def display_head_info(data_asbo_issued, data_asbo_breached):
+  st.subheader("Data Overview")
+  st.write("Issued ASBOs dataset overview:")
+  st.dataframe(data_asbo_issued.head())
+  st.write("Breached ASBOs dataset overview:")
+  st.dataframe(data_asbo_breached.head())
+  st.divider()
+
+display_head_info(data_asbo_issued, data_asbo_breached)
 
 # Plot Overview
-st.subheader("ASBOs Issued Over Years")
-fig, ax = plt.subplots()
-ax.bar(data_asbo_issued['Year of Issue'], data_asbo_issued['ASBOs issued'], color='skyblue')
-ax.set_xlabel("Year of Issue")
-ax.set_ylabel("ASBOs Issued")
-ax.set_title("ASBOs Issued Over Years")
-st.pyplot(fig)
+@st.cache_data
+def plot_asbos_issued(data_asbo_issued):
+  st.subheader("ASBOs Issued Over Years")
+  fig, ax = plt.subplots()
+  ax.bar(data_asbo_issued['Year of Issue'], data_asbo_issued['ASBOs issued'], color='skyblue')
+  ax.set_xlabel("Year of Issue")
+  ax.set_ylabel("ASBOs Issued")
+  ax.set_title("ASBOs Issued Over Years")
+  st.pyplot(fig)
 
-st.subheader("ASBOs Breached Over Years")
-fig, ax = plt.subplots()
-ax.bar(data_asbo_breached['Year of Breach'], data_asbo_breached['ASBOs_breached'], color='skyblue')
-ax.set_xlabel("Year of Breach")
-ax.set_ylabel("ASBOs Breach")
-ax.set_title("ASBOs Breached Over Years")
-st.pyplot(fig)
-st.divider()
+plot_asbos_issued(data_asbo_issued)
+
+@st.cache_data
+def plot_asbos_breached(data_asbo_breached):
+  st.subheader("ASBOs Breached Over Years")
+  fig, ax = plt.subplots()
+  ax.bar(data_asbo_breached['Year of Breach'], data_asbo_breached['ASBOs_breached'], color='skyblue')
+  ax.set_xlabel("Year of Breach")
+  ax.set_ylabel("ASBOs Breach")
+  ax.set_title("ASBOs Breached Over Years")
+  st.pyplot(fig)
+  st.divider()
+  
+plot_asbos_breached(data_asbo_breached)
 
 # Collect the required data
 st.subheader("Breaches by Gender with Court")
