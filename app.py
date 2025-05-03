@@ -60,3 +60,13 @@ else:
 # Show the filtered data table.
 st.write("Data used for the court representation (aggregated by Gender):")
 st.dataframe(filtered_data)
+
+
+# Add a text input for filtering by Court
+court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
+filtered_data = court_data
+search_term = st.text_input("Search by Court", "")
+if search_term: # Apply the search filter:  case-insensitive search
+    filtered_data = filtered_data[filtered_data['Court'].str.contains(search_term, case=False, na=False)]
+st.write("Data used for the geographic representation (aggregated by Court):")
+st.dataframe(filtered_data)
