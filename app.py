@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 
 #################################
 # Load dataset from /data folder
@@ -104,9 +105,17 @@ def asbos_issued_by_court(data_asbo_issued):
   court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
   return court_data
 
-filtered_issued_data = asbos_issued_by_court(data_asbo_issued)
+filtered_issued_asbos = asbos_issued_by_court(data_asbo_issued)
 
 search_term = st.text_input("Search ASBOs issued by Court", "")
 if search_term: # Apply the case-insensitive search filter
-    filtered_issued_data = filtered_issued_data[filtered_issued_data['Court'].str.contains(search_term, case=False, na=False)]
-st.dataframe(filtered_issued_data)
+    filtered_issued_asbos = filtered_issued_asbos[filtered_issued_asbos['Court'].str.contains(search_term, case=False, na=False)]
+    
+    for index, row in filtered_issued_asbos.iterrows():
+      with st.expander(f"{row['Court']} - {row['ASBOs issued']} ASBOs"):
+          # Show all records for this court from original data
+          court_details = data_asbo_issued[data_asbo_issued['Court'] == row['Court']]
+          st.dataframe(court_details)
+
+st.dataframe(filtered_issued_asbos)
+

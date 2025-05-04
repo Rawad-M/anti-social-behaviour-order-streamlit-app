@@ -18,6 +18,7 @@ Using the UI create a new repository called: "`anti-social-behaviour-order-strea
 ### Step 3: Install Streamlit & other Packages
 * `pip install streamlit`
 * `pip install matplotlib`
+* `pip install streamlit-aggrid`
 
 
 ## App Running
