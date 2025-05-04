@@ -87,10 +87,12 @@ else:
 # Show the filtered data table.
 st.write("Data used for the court representation (aggregated by Gender):")
 st.dataframe(filtered_data)
+st.divider()
 
 #################################
 # Add Search Filter
 #################################
+st.subheader("Search by Court")
 # Add a text input for filtering by Court
 court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
 filtered_data = court_data
