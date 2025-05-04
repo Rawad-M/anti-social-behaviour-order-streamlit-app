@@ -61,12 +61,16 @@ plot_asbos_breached(data_asbo_breached)
 #################################
 # Add Gender Filter
 #################################
+@st.cache_data
+def create_gender_filter(data_asbo_issued):
+  # Collect the required data
+  st.subheader("Breaches by Gender with Court")
+  court_gender_data = data_asbo_issued.groupby(['Court', 'Sex'])['ASBOs issued'].sum().unstack(fill_value=0)
+  court_gender_data['Total'] = court_gender_data.sum(axis=1)  # Add a total for each court
+  court_gender_data = court_gender_data.reset_index() # Make 'Court' a regular column
+  return court_gender_data
 
-# Collect the required data
-st.subheader("Breaches by Gender with Court")
-court_gender_data = data_asbo_issued.groupby(['Court', 'Sex'])['ASBOs issued'].sum().unstack(fill_value=0)
-court_gender_data['Total'] = court_gender_data.sum(axis=1)  # Add a total for each court
-court_gender_data = court_gender_data.reset_index() # Make 'Court' a regular column
+court_gender_data = create_gender_filter(data_asbo_issued)
 
 # Create the radio button
 st.subheader("Filter by Gender")
@@ -93,11 +97,16 @@ st.divider()
 # Add Search Filter
 #################################
 st.subheader("Search by Court")
-# Add a text input for filtering by Court
-court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
-filtered_data = court_data
-search_term = st.text_input("Search by Court", "")
-if search_term: # Apply the search filter:  case-insensitive search
-    filtered_data = filtered_data[filtered_data['Court'].str.contains(search_term, case=False, na=False)]
-st.write("Data used for the geographic representation (aggregated by Court):")
-st.dataframe(filtered_data)
+
+@st.cache_data
+def asbos_issued_by_court(data_asbo_issued):
+  # Add a text input for filtering by Court
+  court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
+  return court_data
+
+filtered_issued_data = asbos_issued_by_court(data_asbo_issued)
+
+search_term = st.text_input("Search ASBOs issued by Court", "")
+if search_term: # Apply the case-insensitive search filter
+    filtered_issued_data = filtered_issued_data[filtered_issued_data['Court'].str.contains(search_term, case=False, na=False)]
+st.dataframe(filtered_issued_data)
