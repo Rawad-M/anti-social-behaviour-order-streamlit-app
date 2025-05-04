@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#################################
 # Load dataset from /data folder
+#################################
 @st.cache_data
 def load_data():
     data_asbo_issued = pd.read_csv('data/anti-social-behaviour-order-statistics-court-level-issued-0113.csv', encoding='ISO-8859-1')  
@@ -14,8 +16,9 @@ data_asbo_issued, data_asbo_breached = load_data()
 st.title("UK Government anti-social behaviour order (ASBO)")
 st.write("This application will visualise & display ASBO data for analysis and deeper understanding of the dataset")
 
-
-# Create table overview
+#################################
+# Create tables overview
+#################################
 @st.cache_data
 def display_head_info(data_asbo_issued, data_asbo_breached):
   st.subheader("Data Overview")
@@ -27,7 +30,9 @@ def display_head_info(data_asbo_issued, data_asbo_breached):
 
 display_head_info(data_asbo_issued, data_asbo_breached)
 
+#################################
 # Plot Overview
+#################################
 @st.cache_data
 def plot_asbos_issued(data_asbo_issued):
   st.subheader("ASBOs Issued Over Years")
@@ -52,6 +57,10 @@ def plot_asbos_breached(data_asbo_breached):
   st.divider()
   
 plot_asbos_breached(data_asbo_breached)
+
+#################################
+# Add Gender Filter
+#################################
 
 # Collect the required data
 st.subheader("Breaches by Gender with Court")
@@ -79,7 +88,9 @@ else:
 st.write("Data used for the court representation (aggregated by Gender):")
 st.dataframe(filtered_data)
 
-
+#################################
+# Add Search Filter
+#################################
 # Add a text input for filtering by Court
 court_data = data_asbo_issued.groupby('Court')['ASBOs issued'].sum().reset_index()
 filtered_data = court_data
