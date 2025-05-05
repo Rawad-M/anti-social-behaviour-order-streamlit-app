@@ -59,11 +59,11 @@ def plot_asbos_breached(data_asbo_breached):
   
 plot_asbos_breached(data_asbo_breached)
 
-#################################
-# Add Gender Filter
-#################################
+#####################################
+# Add Gender Filter for ASBOs Issued
+#####################################
 @st.cache_data
-def create_gender_filter(data_asbo_issued):
+def create_issued_gender_filter(data_asbo_issued):
   # Collect the required data
   st.subheader("Breaches by Gender with Court")
   court_gender_data = data_asbo_issued.groupby(['Court', 'Sex'])['ASBOs issued'].sum().unstack(fill_value=0)
@@ -71,7 +71,7 @@ def create_gender_filter(data_asbo_issued):
   court_gender_data = court_gender_data.reset_index() # Make 'Court' a regular column
   return court_gender_data
 
-court_gender_data = create_gender_filter(data_asbo_issued)
+court_gender_data = create_issued_gender_filter(data_asbo_issued)
 
 # Create the radio button
 st.subheader("Filter by Gender")
@@ -107,9 +107,9 @@ def asbos_issued_by_court(data_asbo_issued):
 
 filtered_issued_asbos = asbos_issued_by_court(data_asbo_issued)
 
-search_term = st.text_input("Search ASBOs issued by Court", "")
-if search_term: # Apply the case-insensitive search filter
-    filtered_issued_asbos = filtered_issued_asbos[filtered_issued_asbos['Court'].str.contains(search_term, case=False, na=False)]
+issued_search_term = st.text_input("Search ASBOs 'issued' by Court", "")
+if issued_search_term: # Apply the case-insensitive search filter
+    filtered_issued_asbos = filtered_issued_asbos[filtered_issued_asbos['Court'].str.contains(issued_search_term, case=False, na=False)]
     
     for index, row in filtered_issued_asbos.iterrows():
       with st.expander(f"{row['Court']} - {row['ASBOs issued']} ASBOs"):
@@ -118,6 +118,27 @@ if search_term: # Apply the case-insensitive search filter
           st.dataframe(court_details)
 
 st.dataframe(filtered_issued_asbos)
+
+#####
+@st.cache_data
+def asbos_breached_by_court(data_asbo_breached):
+  # Add a text input for filtering by Court
+  court_data = data_asbo_breached.groupby('Court_breach')['ASBOs_breached'].sum().reset_index()
+  return court_data
+
+filtered_breached_asbos = asbos_breached_by_court(data_asbo_breached)
+
+breached_search_term = st.text_input("Search ASBOs 'breached' by Court", "")
+if breached_search_term: # Apply the case-insensitive search filter
+    filtered_breached_asbos = filtered_breached_asbos[filtered_breached_asbos['Court_breach'].str.contains(breached_search_term, case=False, na=False)]
+    
+    for index, row in filtered_breached_asbos.iterrows():
+      with st.expander(f"{row['Court_breach']} - {row['ASBOs_breached']} ASBOs"):
+          # Show all records for this court from original data
+          court_details = data_asbo_breached[data_asbo_breached['Court_breach'] == row['Court_breach']]
+          st.dataframe(court_details)
+
+st.dataframe(filtered_breached_asbos)
 st.divider()
 
 #################################
