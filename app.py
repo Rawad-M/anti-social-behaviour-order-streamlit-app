@@ -134,11 +134,11 @@ selected_year = st.selectbox("Select Year of Breach", sorted(years))
 selected_age_group = st.selectbox("Select Age Group", sorted(age_groups))
 
 # Radio for Sex with mapping
-sex_choice = st.radio("Select Sex", ['Male', 'Female', 'Both'])
+sex_choice = st.radio("Breached Select Sex", ['Male', 'Female', 'Both'])
 sex_map = {
     'Male': [1],
     'Female': [2],
-    'Both': [1, 2, 9]  # Assuming '9' is unspecified/other
+    'Both': [1, 2, 9]
 }
 
 # Slider for ASBOs_breached
@@ -156,3 +156,47 @@ filtered_df_breached = df_breached[
 
 st.write(f"Filtered Results ({len(filtered_df_breached)} rows):")
 st.dataframe(filtered_df_breached)
+st.divider()
+
+#################################
+# ASBOs Issued Data Explorer
+#################################
+st.title("ASBO Issued Data Explorer")
+df = data_asbo_issued
+
+# Dropdown for Year of Issue
+issued_years = df['Year of Issue'].dropna().unique()
+issued_selected_year = st.selectbox("Select Year of Issue", sorted(issued_years))
+
+# Radio for Sex 
+issued_sex_choice = st.radio("Select Sex", ['Male', 'Female', 'Both'])
+issued_sex_map = {
+    'Male': ['Male'],
+    'Female': ['Female'],
+    'Both': ['Male', 'Female']
+}
+
+# Radio for "Asbo on application or conviction"
+asbo_type_options = df['Asbo on application or conviction'].dropna().unique()
+selected_asbo_type = st.radio("ASBO on Application or Conviction", asbo_type_options)
+
+# Radio for Age Group
+age_group_options = df['Age_Group'].dropna().unique()
+issued_selected_age_group = st.radio("Select Age Group", age_group_options)
+
+# Slider for ASBOs issued
+min_issued = int(df['ASBOs issued'].min())
+max_issued = int(df['ASBOs issued'].max())
+selected_issued = st.slider("Select ASBOs Issued", min_issued, max_issued, (min_issued, max_issued))
+
+# Filter data
+issued_filtered_df = df[
+    (df['Year of Issue'] == issued_selected_year) &
+    (df['Sex'].isin(issued_sex_map[issued_sex_choice])) &
+    (df['Asbo on application or conviction'] == selected_asbo_type) &
+    (df['Age_Group'] == issued_selected_age_group) &
+    (df['ASBOs issued'].between(*selected_issued))
+]
+
+st.write(f"Filtered Results ({len(issued_filtered_df)} rows):")
+st.dataframe(issued_filtered_df)
