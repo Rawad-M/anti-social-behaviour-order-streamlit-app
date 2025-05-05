@@ -118,4 +118,41 @@ if search_term: # Apply the case-insensitive search filter
           st.dataframe(court_details)
 
 st.dataframe(filtered_issued_asbos)
+st.divider()
 
+#################################
+# ASBOs Breached Data Explorer
+#################################
+st.title("ASBOs Breached Data Explorer")
+df_breached = data_asbo_breached;
+
+# Dropdowns
+years = df_breached['Year of Breach'].dropna().unique()
+age_groups = df_breached['Age group breach 2'].dropna().unique()
+
+selected_year = st.selectbox("Select Year of Breach", sorted(years))
+selected_age_group = st.selectbox("Select Age Group", sorted(age_groups))
+
+# Radio for Sex with mapping
+sex_choice = st.radio("Select Sex", ['Male', 'Female', 'Both'])
+sex_map = {
+    'Male': [1],
+    'Female': [2],
+    'Both': [1, 2, 9]  # Assuming '9' is unspecified/other
+}
+
+# Slider for ASBOs_breached
+min_breach = int(df_breached['ASBOs_breached'].min())
+max_breach = int(df_breached['ASBOs_breached'].max())
+selected_breach = st.slider("Select ASBOs Breached", min_breach, max_breach, (min_breach, max_breach))
+
+# Filter data
+filtered_df_breached = df_breached[
+    (df_breached['Year of Breach'] == selected_year) &
+    (df_breached['Age group breach 2'] == selected_age_group) &
+    (df_breached['Sex'].isin(sex_map[sex_choice])) &
+    (df_breached['ASBOs_breached'].between(*selected_breach))
+]
+
+st.write(f"Filtered Results ({len(filtered_df_breached)} rows):")
+st.dataframe(filtered_df_breached)
